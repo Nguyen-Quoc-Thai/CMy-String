@@ -1,26 +1,38 @@
 ﻿#include "CMyString.h"
 
+// Phương thức nội hỗ trợ việc copy và cắt chuổi
+
+/*
+Phương thức copy chuổi source vào chuổi dest
+*/
 void CMyString::str_cpy(char*& dest, const char* source)
 {
-	size_t length = strlen(source);
+	int length = strlen(source);
 	dest = new char[16 + length];
 
-	for (size_t j = 0; j < length; j++)
+	for (int j = 0; j < length; j++)
 		dest[j] = source[j];
+
 	dest[length] = '\0';
 	
 }
 
+/*
+Phương thức cắt chuổi substr vào chuổi dest từ vị trí subpos sublen phần tử
+*/
 void CMyString::str_sub(char*& dest, char* substr, size_t subpos, size_t sublen)
 {
 	dest = new char[sublen + 1];
-	size_t k = subpos;
-	size_t i = 0;
+
+	int k = subpos;
+	int i = 0;
+
 	while (i < sublen) {
 		dest[i] = substr[k];
 		k++;
 		i++;
 	}
+
 	dest[sublen] = '\0';
 }
 
@@ -81,6 +93,7 @@ CMyString::CMyString(const char* s, size_t n)
 
 	this->length_ = n;
 	this->capacity_ = this->length_ + 16;
+
 	str_cpy(this->string_, s);
 }
 
@@ -89,17 +102,22 @@ CMyString::CMyString(size_t n, char c)
 	this->length_ = n;
 	this->capacity_ = this->length_ + 16;
 	this->string_ = new char[this->capacity_];
-	for (size_t i = 0; i < this->length_; i++)
+	
+	for (size_t i = 0; i < this->length_; i++) {
 		this->string_[i] = c;
+
+	}
 
 	this->string_[this->length_] = '\0';
 }
 
+// phương thức hủy
 CMyString::~CMyString()
 {
 	delete[] string_;
 }
 
+// Toán tử gán =
 CMyString& CMyString::operator=(const CMyString& str)
 {
 	// TODO: insert return statement here
@@ -143,64 +161,65 @@ CMyString& CMyString::operator=(char c)
 	return *this;
 }
 
-CMyString::Iterator CMyString::begin()
+// Iterator
+Iterator CMyString::begin()
 {
 	return Iterator(this->string_);
 }
 
-CMyString::Const_Iterator CMyString::begin() const
+const Iterator CMyString::begin() const
 {
-	return Const_Iterator(this->string_);
+	return Iterator(this->string_);
 }
 
-CMyString::Iterator CMyString::end()
+Iterator CMyString::end()
 {
 	return Iterator(this->string_ + this->length_);
 }
 
-CMyString::Const_Iterator CMyString::end() const
+const Iterator CMyString::end() const
+{
+	return Iterator(this->string_ + this->length_);
+}
+
+Reverse_Iterator CMyString::rbegin()
+{
+	return Reverse_Iterator(this->string_ + (this->length_ - 1));
+}
+
+const Reverse_Iterator CMyString::rbegin() const
+{
+	return Reverse_Iterator(this->string_ + (this->length_ - 1));
+}
+
+Reverse_Iterator CMyString::rend()
+{
+	return Reverse_Iterator(this->string_ - 1);
+}
+
+const Reverse_Iterator CMyString::rend() const
+{
+	return Reverse_Iterator(this->string_ - 1);
+}
+
+const Const_Iterator CMyString::cbegin() const
+{
+	return Const_Iterator(this->string_);
+}
+
+const Const_Iterator CMyString::cend() const
 {
 	return Const_Iterator(this->string_ + this->length_);
 }
 
-CMyString::Iterator CMyString::rbegin()
+const Const_Reverse_Iterator CMyString::crbegin() const
 {
-	return Iterator(this->string_ + this->length_ - 1);
+	return Const_Reverse_Iterator(this->string_ + (this->length_ - 1));
 }
 
-CMyString::Const_Iterator CMyString::rbegin() const
+const Const_Reverse_Iterator CMyString::crend() const
 {
-	return Const_Iterator(this->string_ + this->length_ - 1);
-}
-
-CMyString::Iterator CMyString::rend()
-{
-	return Iterator(this->string_ - 1);
-}
-
-CMyString::Const_Iterator CMyString::rend() const
-{
-	return Const_Iterator(this->string_ - 1);
-}
-
-CMyString::Const_Iterator CMyString::cbegin() const
-{
-	return Const_Iterator(this->string_ );
-}
-
-CMyString::Const_Iterator CMyString::cend() const
-{
-	return Const_Iterator(this->string_ + this->length_);
-}
-
-CMyString::Const_Iterator CMyString::crbegin() const
-{
-	return Const_Iterator(this->string_ + this->length_ - 1);
-}
-
-CMyString::Const_Iterator CMyString::crend() const
-{
-	return Const_Iterator(this->string_  - 1);
+	return Const_Reverse_Iterator(this->string_ - 1);
 }
 
 void CMyString::swap(CMyString& x, CMyString& y)
@@ -210,11 +229,12 @@ void CMyString::swap(CMyString& x, CMyString& y)
 	y = _dummy;
 }
 
+// delim là kí tự kết thúc
 istream& CMyString::getline(istream& is, CMyString& str, char delim)
 {
 	// TODO: insert return statement here
 
-	char* _dummy = new char[1000];
+	char* _dummy = new char[1001];
 
 	gets_s(_dummy, 1000);
 
@@ -231,7 +251,6 @@ istream& CMyString::getline(istream& is, CMyString& str, char delim)
 
 	_dummy2.length_ = len;
 	_dummy2.capacity_ = _dummy2.length_ + 16;
-
 	_dummy2.string_ = new char[_dummy2.capacity_];
 
 	for (int i = 0; i < _dummy2.length_; i++) {
@@ -252,7 +271,7 @@ istream& CMyString::getline(istream& is, CMyString& str)
 {
 	// TODO: insert return statement here
 
-	char* _dummy = new char[1000];
+	char* _dummy = new char[1001];
 	is >> _dummy;
 
 	str = _dummy;
@@ -424,54 +443,63 @@ void CMyString::shrink_to_fit()
 char& CMyString::operator[](size_t pos)
 {
 	// TODO: insert return statement here
+
 	return this->string_[pos];
 }
 
 const char& CMyString::operator[](size_t pos) const
 {
 	// TODO: insert return statement here
+
 	return this->string_[pos];
 }
 
 char& CMyString::at(size_t pos)
 {
 	// TODO: insert return statement here
+
 	return this->string_[pos];
 }
 
 const char& CMyString::at(size_t pos) const
 {
 	// TODO: insert return statement here
+
 	return this->string_[pos];
 }
 
 char& CMyString::back()
 {
 	// TODO: insert return statement here
+
 	return this->string_[this->length_ - 1];
 }
 
 const char& CMyString::back() const
 {
 	// TODO: insert return statement here
+
 	return this->string_[this->length_ - 1];
 }
 
 char& CMyString::front()
 {
 	// TODO: insert return statement here
+
 	return this->string_[0];
 }
 
 const char& CMyString::front() const
 {
 	// TODO: insert return statement here
+
 	return this->string_[0];
 }
 
 CMyString& CMyString::operator+=(const CMyString& str)
 {
 	// TODO: insert return statement here
+
 	char* _dummy = NULL;
 	str_cpy(_dummy,this->string_);
 
@@ -505,6 +533,7 @@ CMyString& CMyString::operator+=(const CMyString& str)
 CMyString& CMyString::operator+=(const char* s)
 {
 	// TODO: insert return statement here
+
 	char* _dummy = NULL;
 	str_cpy(_dummy, this->string_);
 
@@ -538,6 +567,7 @@ CMyString& CMyString::operator+=(const char* s)
 CMyString& CMyString::operator+=(char c)
 {
 	// TODO: insert return statement here
+
 	char* _dummy = NULL;
 	str_cpy(_dummy, this->string_);
 
@@ -562,6 +592,7 @@ CMyString& CMyString::operator+=(char c)
 CMyString& CMyString::append(const CMyString& str)
 {
 	// TODO: insert return statement here
+
 	*this += str;
 	return *this;
 }
@@ -569,6 +600,7 @@ CMyString& CMyString::append(const CMyString& str)
 CMyString& CMyString::append(const CMyString& str, size_t subpos, size_t sublen)
 {
 	// TODO: insert return statement here
+
 	char* _dummy = NULL;
 
 	str_sub(_dummy, str.string_, subpos, sublen);
@@ -583,6 +615,7 @@ CMyString& CMyString::append(const CMyString& str, size_t subpos, size_t sublen)
 CMyString& CMyString::append(const char* s)
 {
 	// TODO: insert return statement here
+
 	*this += s;
 	return *this;
 }
@@ -590,6 +623,7 @@ CMyString& CMyString::append(const char* s)
 CMyString& CMyString::append(const char* s, size_t n)
 {
 	// TODO: insert return statement here
+
 	char* _dummy = NULL;
 	_dummy = new char[n + 1];
 
@@ -609,6 +643,7 @@ CMyString& CMyString::append(const char* s, size_t n)
 CMyString& CMyString::append(size_t n, char c)
 {
 	// TODO: insert return statement here
+
 	char* _dummy = NULL;
 	_dummy = new char[n + 1];
 
@@ -633,12 +668,14 @@ void CMyString::push_back(char c)
 CMyString& CMyString::assign(const CMyString& str)
 {
 	// TODO: insert return statement here
+
 	return *this = CMyString(str);
 }
 
 CMyString& CMyString::assign(const CMyString& str, size_t subpos, size_t sublen)
 {
 	// TODO: insert return statement here
+
 	char* _dummy = NULL;
 	str_sub(_dummy, str.string_, subpos, sublen);
 
@@ -651,12 +688,14 @@ CMyString& CMyString::assign(const CMyString& str, size_t subpos, size_t sublen)
 CMyString& CMyString::assign(const char* s)
 {
 	// TODO: insert return statement here
+
 	return *this = CMyString(s);
 }
 
 CMyString& CMyString::assign(const char* s, size_t n)
 {
 	// TODO: insert return statement here
+
 	char* _dummy = NULL;
 	char* _dummy2 = NULL;
 
@@ -674,6 +713,7 @@ CMyString& CMyString::assign(const char* s, size_t n)
 CMyString& CMyString::assign(size_t n, char c)
 {
 	// TODO: insert return statement here
+
 	CMyString _dummy;
 
 	_dummy.append(n, c);
@@ -686,6 +726,7 @@ CMyString& CMyString::assign(size_t n, char c)
 CMyString& CMyString::insert(size_t pos, const CMyString& str)
 {
 	// TODO: insert return statement here
+
 	char* _dummy = NULL;
 	char* _dummy2 = NULL;
 	char* _dummy3 = NULL;
@@ -709,6 +750,7 @@ CMyString& CMyString::insert(size_t pos, const CMyString& str)
 CMyString& CMyString::insert(size_t pos, const CMyString& str, size_t subpos, size_t sublen)
 {
 	// TODO: insert return statement here
+
 	char* _dummy = NULL;
 	char* _dummy2 = NULL;
 	char* _dummy3 = NULL;
@@ -733,6 +775,7 @@ CMyString& CMyString::insert(size_t pos, const CMyString& str, size_t subpos, si
 CMyString& CMyString::insert(size_t pos, const char* s)
 {
 	// TODO: insert return statement here
+
 	char* _dummy = NULL;
 	char* _dummy2 = NULL;
 	char* _dummy3 = NULL;
@@ -755,6 +798,7 @@ CMyString& CMyString::insert(size_t pos, const char* s)
 CMyString& CMyString::insert(size_t pos, const char* s, size_t n)
 {
 	// TODO: insert return statement here
+
 	char* _dummy = NULL;
 	char* _dummy2 = NULL;
 	char* _dummy3 = NULL;
@@ -781,6 +825,7 @@ CMyString& CMyString::insert(size_t pos, const char* s, size_t n)
 CMyString& CMyString::insert(size_t pos, size_t n, char c)
 {
 	// TODO: insert return statement here
+
 	CMyString _dummy;
 
 	_dummy.append(n, c);
@@ -807,6 +852,7 @@ void CMyString::insert(Iterator p, size_t n, char c)
 CMyString& CMyString::erase(size_t pos, size_t len)
 {
 	// TODO: insert return statement here
+
 	if (pos < 0 || pos > this->length_ - 1) {
 		cout << "Pos error !" << endl;
 		return *this;
@@ -824,6 +870,7 @@ CMyString& CMyString::erase(size_t pos, size_t len)
 CMyString& CMyString::replace(size_t pos, size_t len, const CMyString& str)
 {
 	// TODO: insert return statement here
+
 	char* _dummy = NULL;
 	char* _dummy2 = NULL;
 	char* _dummy3 = NULL;
@@ -848,6 +895,7 @@ CMyString& CMyString::replace(size_t pos, size_t len, const CMyString& str)
 CMyString& CMyString::replace(size_t pos, size_t len, const CMyString& str, size_t subpos, size_t sublen)
 {
 	// TODO: insert return statement here
+
 	char* _dummy = NULL;
 	char* _dummy2 = NULL;
 	char* _dummy3 = NULL;
@@ -874,6 +922,7 @@ CMyString& CMyString::replace(size_t pos, size_t len, const CMyString& str, size
 CMyString& CMyString::replace(size_t pos, size_t len, const char* s)
 {
 	// TODO: insert return statement here
+
 	char* _dummy = NULL;
 	char* _dummy2 = NULL;
 	char* _dummy3 = NULL;
@@ -902,6 +951,7 @@ CMyString& CMyString::replace(size_t pos, size_t len, const char* s)
 CMyString& CMyString::replace(size_t pos, size_t len, const char* s, size_t n)
 {
 	// TODO: insert return statement here
+
 	char* _dummy = NULL;
 	char* _dummy2 = NULL;
 	char* _dummy3 = NULL;

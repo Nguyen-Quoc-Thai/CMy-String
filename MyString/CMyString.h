@@ -1,5 +1,10 @@
 ﻿#pragma once
 
+#include"Iterator.cpp"
+#include"Const_Iterator.cpp"
+#include"Reverse_Iterator.cpp"
+#include"Const_Reverse_Iterator.cpp"
+
 #include<iostream>
 #include<fstream>
 #include<string.h>
@@ -39,37 +44,32 @@ public:
 	CMyString& operator= (const char* s);
 	CMyString& operator= (char c);
 
-	// Con trỏ duyệt chuổi string
-	typedef char* Iterator;
-	typedef char* Const_Iterator;
-	typedef CMyString::Iterator Iterator;
-	typedef CMyString::Const_Iterator Const_Iterator;
-
-	// ITERATOR
-
+	// Iterator
 	Iterator begin();
-	Const_Iterator begin() const;
+	const Iterator begin() const;
 
 	Iterator end();
-	Const_Iterator end() const;
+	const Iterator end() const;
 
-	Iterator rbegin();
-	Const_Iterator rbegin() const;
+	Reverse_Iterator rbegin();
+	const Reverse_Iterator rbegin() const;
 
-	Iterator rend();
-	Const_Iterator rend() const;
+	Reverse_Iterator rend();
+	const Reverse_Iterator rend() const;
 
-	Const_Iterator cbegin() const;
-	Const_Iterator cend() const;
-	Const_Iterator crbegin() const;
-	Const_Iterator crend() const;
+	const Const_Iterator cbegin() const;
+	const Const_Iterator cend() const;
+	const Const_Reverse_Iterator crbegin() const;
+	const Const_Reverse_Iterator crend() const;
 
 	// Capacity
 	size_t size() const;
 	size_t length() const;
 	size_t max_size() const;
+
 	void resize(size_t n);
 	void resize(size_t n, char c);
+
 	size_t capacity();
 	void reserve(size_t n = 0);
 	void clear();
@@ -79,10 +79,13 @@ public:
 	// Element access----------------------------------------------------------------------------------------
 	char& operator[] (size_t pos);
 	const char& operator[] (size_t pos) const;
+
 	char& at(size_t pos);
 	const char& at(size_t pos) const;
+
 	char& back();
 	const char& back() const;
+
 	char& front();
 	const char& front() const;
 
