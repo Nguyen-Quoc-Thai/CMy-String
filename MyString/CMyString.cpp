@@ -229,61 +229,6 @@ void CMyString::swap(CMyString& x, CMyString& y)
 	y = _dummy;
 }
 
-// delim là kí tự kết thúc
-istream& CMyString::getline(istream& is, CMyString& str, char delim)
-{
-	// TODO: insert return statement here
-
-	char* _dummy = new char[1001];
-
-	gets_s(_dummy, 1000);
-
-	CMyString _dummy2;
-
-	int len = 0;
-
-	for (int i = 0; i < strlen(_dummy); i++) {
-		if (_dummy[i] == delim) {
-			len = i;
-			break;
-		}
-	}
-
-	_dummy2.length_ = len;
-	_dummy2.capacity_ = _dummy2.length_ + 16;
-	_dummy2.string_ = new char[_dummy2.capacity_];
-
-	for (int i = 0; i < _dummy2.length_; i++) {
-		_dummy2.string_[i] = _dummy[i];
-	}
-
-	_dummy2.string_[_dummy2.length_] = '\0';
-
-	str = _dummy2;
-
-	delete[] _dummy;
-	_dummy2.~CMyString();
-
-	return is;
-}
-
-istream& CMyString::getline(istream& is, CMyString& str)
-{
-	// TODO: insert return statement here
-
-	char* _dummy = new char[1001];
-	is >> _dummy;
-
-	str = _dummy;
-	int len = strlen(_dummy);
-
-	str.string_[len] = '\0';
-
-	delete[] _dummy;
-
-	return is;
-}
-
 size_t CMyString::size() const
 {
 	return size_t(this->length_);
@@ -1039,90 +984,97 @@ size_t CMyString::copy(char* s, size_t len, size_t pos) const
 		return -1;
 
 	int k = 0;
-	for (int i = pos; i < (pos) + len; i++) {
+
+	for (int i = pos; i < (pos + len); i++) {
 		s[k] = this->string_[i];
 		k++;
 	}
-
-	s[pos + len] = '\0';
 
 	return len;
 }
 
 size_t CMyString::find(const CMyString& str, size_t pos) const
 {
-	if (pos < 0 || pos > length_)
-		return -1;
-
-	for (int i = 0; i < this->length_; i++) {
-		if (str.string_[i] == this->string_[i] && this->length_ - i >= str.length_) {
-			int k = i;
-
-			for (int j = 0; j < strlen(str.string_); j++) {
-				if (str.string_[j] != this->string_[k]) {
-					break;
-				}
-
-				if (j == strlen(str.string_) - 1) {
-					return i;
-				}
-				k++;
-			}
+	for (int i = pos; i < this->length_; i++) {
+		if (str.string_[0] == this->string_[i]) {
+			pos = i;
+			break;
 		}
 	}
 
-	return this->length_;
+	if (pos < 0) 
+		return -1;
+
+	int k = pos, frag = 0;
+
+	for (int j = 0; j < strlen(str.string_); j++) {
+
+		if (str.string_[j] == this->string_[k])
+			frag = 1;
+		else {
+			return str.length_;
+		}
+
+		k++;
+	}
+
+	return pos;
 }
 
 size_t CMyString::find(const char* s, size_t pos) const
 {
-	if (pos < 0 || pos > length_)
-		return -1;
-
-	for (int i = 0; i < this->length_; i++) {
-		if (s[i] == this->string_[i] && this->length_ - i >= strlen(s)) {
-			int k = i;
-
-			for (int j = 0; j < strlen(s); j++) {
-				if (s[j] != this->string_[k]) {
-					break;
-				}
-
-				if (j == strlen(s) - 1) {
-					return i;
-				}
-				k++;
-			}
+	for (int i = pos; i < this->length_; i++) {
+		if (s[0] == this->string_[i]) {
+			pos = i;
+			break;
 		}
 	}
 
-	return this->length_;
+	if (pos < 0)
+		return -1;
+
+	int k = pos, frag = 0;
+
+	for (int j = 0; j < strlen(s); j++) {
+
+		if (s[j] == this->string_[k])
+			frag = 1;
+		else {
+			return strlen(s);
+		}
+
+		k++;
+	}
+
+	return pos;
 }
 
 size_t CMyString::find(const char* s, size_t pos, size_t n) const
 {
-	if (pos < 0 || pos > length_)
-		return -1;
-
 	for (int i = pos; i < pos + n; i++) {
-		if (s[i] == this->string_[i] && this->length_ - i >= strlen(s)) {
-			int k = i;
-
-			for (int j = 0; j < strlen(s); j++) {
-				if (s[j] != this->string_[k]) {
-					break;
-				}
-
-				if (j == strlen(s) - 1) {
-					return i;
-				}
-
-				k++;
-			}
+		if (s[0] == this->string_[i]) {
+			pos = i;
+			break;
 		}
 	}
 
-	return this->length_;
+	if (pos < 0)
+		return -1;
+
+	int k = pos, frag = 0;
+
+	for (int j = 0; j < strlen(s); j++) {
+
+		if (s[j] == this->string_[k])
+			frag = 1;
+		else {
+			return strlen(s);
+		}
+
+		k++;
+	}
+
+	return pos;
 }
 
 size_t CMyString::find(char c, size_t pos) const
@@ -1141,77 +1093,86 @@ size_t CMyString::find(char c, size_t pos) const
 
 size_t CMyString::rfind(const CMyString& str, size_t pos) const
 {
-	if (pos < 0 || pos > length_)
-		return -1;
-
-	for (int i = length_ - pos; i >= 0; i--) {
-		if (str.string_[i] == this->string_[i] && this->length_ - i >= str.length_) {
-			int k = i;
-
-			for (int j = 0; j < strlen(str.string_); j++) {
-				if (str.string_[j] != this->string_[k]) {
-					break;
-				}
-
-				if (j == strlen(str.string_) - 1) {
-					return i;
-				}
-				k++;
-			}
+	for (int i = pos; i < this->length_; i++) {
+		if (str.string_[0] == this->string_[i]) {
+			pos = i;
+			break;
 		}
 	}
 
-	return this->length_;
+	if (pos < 0)
+		return -1;
+
+	int k = pos, frag = 0;
+
+	for (int j = strlen(str.string_) - 1; j >= 0; j++) {
+
+		if (str.string_[j] == this->string_[k])
+			frag = 1;
+		else {
+			return str.length_;
+		}
+
+		k++;
+	}
+
+	return pos;
 }
 
 size_t CMyString::rfind(const char* s, size_t pos) const
 {
-	if (pos < 0 || pos > length_)
-		return -1;
-
-	for (int i = length_ - pos; i >= 0; i--) {
-		if (s[i] == this->string_[i] && this->length_ - i >= strlen(s)) {
-			int k = i;
-
-			for (int j = 0; j < strlen(s); j++) {
-				if (s[j] != this->string_[k]) {
-					break;
-				}
-
-				if (j == strlen(s) - 1) {
-					return i;
-				}
-				k++;
-			}
+	for (int i = pos; i < this->length_; i++) {
+		if (s[0] == this->string_[i]) {
+			pos = i;
+			break;
 		}
 	}
 
-	return this->length_;
+	if (pos < 0)
+		return -1;
+
+	int k = pos, frag = 0;
+
+	for (int j = strlen(s) - 1; j >= 0; j++) {
+
+		if (s[j] == this->string_[k])
+			frag = 1;
+		else {
+			return strlen(s);
+		}
+
+		k++;
+	}
+
+	return pos;
 }
 
 size_t CMyString::rfind(const char* s, size_t pos, size_t n) const
 {
-	if (pos < 0 || pos > length_)
-		return -1;
-
-	for (int i = length_ - pos; i >= pos - n; i--) {
-		if (s[i] == this->string_[i] && this->length_ - i >= strlen(s)) {
-			int k = i;
-
-			for (int j = 0; j < strlen(s); j++) {
-				if (s[j] != this->string_[k]) {
-					break;
-				}
-
-				if (j == strlen(s) - 1) {
-					return i;
-				}
-				k++;
-			}
+	for (int i = pos; i < pos + n; i++) {
+		if (s[0] == this->string_[i]) {
+			pos = i;
+			break;
 		}
 	}
 
-	return this->length_;
+	if (pos < 0)
+		return -1;
+
+	int k = pos, frag = 0;
+
+	for (int j = strlen(s) - 1; j >= 0; j++) {
+
+		if (s[j] == this->string_[k])
+			frag = 1;
+		else {
+			return strlen(s);
+		}
+
+		k++;
+	}
+
+	return pos;
 }
 
 size_t CMyString::rfind(char c, size_t pos) const
@@ -1882,4 +1843,58 @@ ostream& operator<<(ostream& os, const CMyString& str)
 	}
 
 	return os;
+}
+
+istream& get_line(istream& is, CMyString& str, char delim)
+{
+	// TODO: insert return statement here
+
+	char* _dummy = new char[1001];
+
+	gets_s(_dummy, 1000);
+
+	CMyString _dummy2;
+
+	int len = 0;
+
+	for (int i = 0; i < strlen(_dummy); i++) {
+		if (_dummy[i] == delim) {
+			len = i;
+			break;
+		}
+	}
+
+	_dummy2.length_ = len;
+	_dummy2.capacity_ = _dummy2.length_ + 16;
+	_dummy2.string_ = new char[_dummy2.capacity_];
+
+	for (int i = 0; i < _dummy2.length_; i++) {
+		_dummy2.string_[i] = _dummy[i];
+	}
+
+	_dummy2.string_[_dummy2.length_] = '\0';
+
+	str = _dummy2;
+
+	delete[] _dummy;
+	_dummy2.~CMyString();
+
+	return is;
+}
+
+istream& get_line(istream& is, CMyString& str)
+{
+	// TODO: insert return statement here
+
+	char* _dummy = new char[1001];
+	is >> _dummy;
+
+	str = _dummy;
+	int len = strlen(_dummy);
+
+	str.string_[len] = '\0';
+
+	delete[] _dummy;
+
+	return is;
 }

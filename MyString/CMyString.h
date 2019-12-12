@@ -210,7 +210,7 @@ public:
 	friend istream& operator>> (istream& is, CMyString& str);
 	friend ostream& operator<< (ostream& os, const CMyString& str);
 
-	istream& getline(istream& is, CMyString& str, char delim);
-	istream& getline(istream& is, CMyString& str);
+	friend istream& get_line(istream& is, CMyString& str, char delim);
+	friend istream& get_line(istream& is, CMyString& str);
 };
 
