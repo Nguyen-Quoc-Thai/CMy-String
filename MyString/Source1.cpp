@@ -70,13 +70,6 @@ int main()
 		cout << *i;
 	}
 
-	/*cout << endl;
-
-	cout << "\nString.begin(): " << *m10.begin();
-	cout << "\nString.end(): " << *m10.end();
-	cout << "\nString.rbegin(): " << *m10.rbegin();
-	cout << "\nString.rend(): " << *m10.rend();*/
-
 	cout << endl << endl;
 
 

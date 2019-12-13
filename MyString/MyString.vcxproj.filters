@@ -15,16 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="CMyString.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Test\MyString.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source1.cpp">
@@ -44,13 +35,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="MyString.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="CMyString.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Test\MyString.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
