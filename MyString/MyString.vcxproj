@@ -24,7 +24,7 @@
     <ClCompile Include="Const_Reverse_Iterator.cpp" />
     <ClCompile Include="Iterator.cpp" />
     <ClCompile Include="Reverse_Iterator.cpp" />
-    <ClCompile Include="Source1.cpp" />
+    <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CMyString.h" />

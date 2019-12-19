@@ -7,10 +7,17 @@ Phương thức copy chuổi source vào chuổi dest
 */
 void CMyString::str_cpy(char*& dest, const char* source)
 {
-	int length = strlen(source);
+	dest = NULL;
+
+	size_t length = 0;
+
+	if (source != NULL) {
+		length = strlen(source);
+	}
+
 	dest = new char[16 + length];
 
-	for (int j = 0; j < length; j++)
+	for (size_t j = 0; j < length; j++)
 		dest[j] = source[j];
 
 	dest[length] = '\0';
@@ -24,8 +31,13 @@ void CMyString::str_sub(char*& dest, char* substr, size_t subpos, size_t sublen)
 {
 	dest = new char[sublen + 1];
 
-	int k = subpos;
-	int i = 0;
+	size_t k = subpos;
+	size_t i = 0;
+
+	if (subpos + sublen > strlen(substr)) {
+		cout << "\n\nHave some bug ! \n\n";
+		exit(EXIT_SUCCESS);
+	}
 
 	while (i < sublen) {
 		dest[i] = substr[k];
@@ -137,11 +149,13 @@ CMyString& CMyString::operator=(const char* s)
 {
 	// TODO: insert return statement here
 
-	this->clear();
+	if (this->string_ != s) {
+		this->clear();
 
-	this->length_ = strlen(s);
-	this->capacity_ = this->length_ + 16;
-	str_cpy(this->string_, s);
+		this->length_ = strlen(s);
+		this->capacity_ = this->length_ + 16;
+		str_cpy(this->string_, s);
+	}
 
 	return *this;
 }
@@ -273,6 +287,7 @@ void CMyString::resize(size_t n)
 
 			this->string_[i] = '\0';
 		}
+
 		delete[]_dummy;
 	}
 }
@@ -338,7 +353,7 @@ void CMyString::reserve(size_t n)
 
 		this->string_ = new char[this->capacity_];
 
-		for (int i = 0; i < strlen(_dummy); i++) {
+		for (size_t i = 0; i < strlen(_dummy); i++) {
 			this->string_[i] = _dummy[i];
 		}
 
@@ -377,7 +392,7 @@ void CMyString::shrink_to_fit()
 
 	this->string_ = new char[this->capacity_];
 
-	for (int i = 0; i < this->length_; i++) {
+	for (size_t i = 0; i < this->length_; i++) {
 		this->string_[i] = _dummy[i];
 	}
 
@@ -453,14 +468,14 @@ CMyString& CMyString::operator+=(const CMyString& str)
 
 	this->string_ = new char[this->capacity_];
 
-	int i = 0;
+	size_t i = 0;
 	while (_dummy[i] != '\0')
 	{
 		this->string_[i] = _dummy[i];
 		i++;
 	}
 
-	int j = i, k = 0;
+	size_t j = i, k = 0;
 	while (str.string_[k] != '\0')
 	{
 		this->string_[j] = str.string_[k];
@@ -487,14 +502,14 @@ CMyString& CMyString::operator+=(const char* s)
 
 	this->string_ = new char[this->capacity_];
 
-	int i = 0;
+	size_t i = 0;
 	while (_dummy[i] != '\0')
 	{
 		this->string_[i] = _dummy[i];
 		i++;
 	}
 
-	int j = i, k = 0;
+	size_t j = i, k = 0;
 	while (s[k] != '\0')
 	{
 		this->string_[j] = s[k];
@@ -521,7 +536,7 @@ CMyString& CMyString::operator+=(char c)
 
 	this->string_ = new char[this->capacity_];
 
-	int i = 0;
+	size_t i = 0;
 	while (_dummy[i] != '\0') {
 		this->string_[i] = _dummy[i];
 		i++;
@@ -572,7 +587,7 @@ CMyString& CMyString::append(const char* s, size_t n)
 	char* _dummy = NULL;
 	_dummy = new char[n + 1];
 
-	for (int i = 0; i < n; i++) {
+	for (size_t i = 0; i < n; i++) {
 		_dummy[i] = s[i];
 	}
 
@@ -592,7 +607,7 @@ CMyString& CMyString::append(size_t n, char c)
 	char* _dummy = NULL;
 	_dummy = new char[n + 1];
 
-	for (int i = 0; i < n; i++) {
+	for (size_t i = 0; i < n; i++) {
 		_dummy[i] = c;
 	}
 
@@ -956,7 +971,7 @@ void CMyString::pop_back()
 
 	this->string_ = new char[this->capacity_];
 
-	for (int i = 0; i < this->length_; i++) {
+	for (size_t i = 0; i < this->length_; i++) {
 		this->string_[i] = _dummy[i];
 	}
 
@@ -975,7 +990,12 @@ const char* CMyString::data() const
 
 allocator<char> CMyString::get_allocator() const
 {
-	return allocator<char>();
+	allocator<char> res;
+	char* temp = res.allocate(length_);
+	strcpy(temp, string_);
+	temp[length_] = '\0';
+
+	return res;
 }
 
 size_t CMyString::copy(char* s, size_t len, size_t pos) const
@@ -995,7 +1015,7 @@ size_t CMyString::copy(char* s, size_t len, size_t pos) const
 
 size_t CMyString::find(const CMyString& str, size_t pos) const
 {
-	for (int i = pos; i < this->length_; i++) {
+	for (size_t i = pos; i < this->length_; i++) {
 		if (str.string_[0] == this->string_[i]) {
 			pos = i;
 			break;
@@ -1051,7 +1071,7 @@ size_t CMyString::find(const char* s, size_t pos) const
 
 size_t CMyString::find(const char* s, size_t pos, size_t n) const
 {
-	for (int i = pos; i < pos + n; i++) {
+	for (size_t i = pos; i < pos + n; i++) {
 		if (s[0] == this->string_[i]) {
 			pos = i;
 			break;
@@ -1093,7 +1113,7 @@ size_t CMyString::find(char c, size_t pos) const
 
 size_t CMyString::rfind(const CMyString& str, size_t pos) const
 {
-	for (int i = pos; i < this->length_; i++) {
+	for (size_t i = pos; i < this->length_; i++) {
 		if (str.string_[0] == this->string_[i]) {
 			pos = i;
 			break;
@@ -1198,7 +1218,7 @@ size_t CMyString::find_first_of(const CMyString& str, size_t pos) const
 
 	int i;
 	for (i = pos; i < this->length_; i++) {
-		for (int j = 0; j < strlen(str.string_); j++) {
+		for (size_t j = 0; j < strlen(str.string_); j++) {
 			if (this->string_[i] == str.string_[j])
 				return i;
 		}
@@ -1216,7 +1236,7 @@ size_t CMyString::find_first_of(const char* s, size_t pos) const
 
 	int i;
 	for (i = pos; i < this->length_; i++) {
-		for (int j = 0; j < strlen(s); j++) {
+		for (size_t j = 0; j < strlen(s); j++) {
 			if (this->string_[i] == s[j])
 				return i;
 		}
@@ -1234,7 +1254,7 @@ size_t CMyString::find_first_of(const char* s, size_t pos, size_t n) const
 
 	int i;
 	for (i = pos; i < n; i++) {
-		for (int j = 0; j < strlen(s); j++) {
+		for (size_t j = 0; j < strlen(s); j++) {
 			if (this->string_[i] == s[j])
 				return i;
 		}
@@ -1327,7 +1347,7 @@ size_t CMyString::find_last_of(char c, size_t pos) const
 
 size_t CMyString::find_first_not_of(const CMyString& str, size_t pos) const
 {
-	int flag;
+	size_t flag;
 	if (pos < 0 || pos > this->length_) 
 		return -1;
 
@@ -1350,7 +1370,7 @@ size_t CMyString::find_first_not_of(const CMyString& str, size_t pos) const
 
 size_t CMyString::find_first_not_of(const char* s, size_t pos) const
 {
-	int flag;
+	size_t flag;
 	if (pos < 0 || pos > this->length_)
 		return -1;
 
@@ -1373,7 +1393,7 @@ size_t CMyString::find_first_not_of(const char* s, size_t pos) const
 
 size_t CMyString::find_first_not_of(const char* s, size_t pos, size_t n) const
 {
-	int flag;
+	size_t flag;
 	if (pos < 0 || pos > this->length_ || pos + n > length_ )
 		return -1;
 
@@ -1410,7 +1430,7 @@ size_t CMyString::find_first_not_of(char c, size_t pos) const
 
 size_t CMyString::find_last_not_of(const CMyString& str, size_t pos) const
 {
-	int flag;
+	size_t flag;
 
 	if (pos < 0 || pos > this->length_) 
 		return -1;
@@ -1418,7 +1438,7 @@ size_t CMyString::find_last_not_of(const CMyString& str, size_t pos) const
 	for (int i = pos; i >= 0; i--) {
 		flag = 1;
 
-		for (int j = strlen(str.string_); j >= 0; j--) {
+		for (int j = strlen(str.string_) - 1; j >= 0; j--) {
 			if (this->string_[i] == str.string_[j]) {
 				flag = 0;
 				break;
@@ -1434,7 +1454,7 @@ size_t CMyString::find_last_not_of(const CMyString& str, size_t pos) const
 
 size_t CMyString::find_last_not_of(const char* s, size_t pos) const
 {
-	int flag;
+	size_t flag;
 
 	if (pos < 0 || pos > this->length_)
 		return -1;
@@ -1442,7 +1462,7 @@ size_t CMyString::find_last_not_of(const char* s, size_t pos) const
 	for (int i = pos; i >= 0; i--) {
 		flag = 1;
 
-		for (int j = strlen(s); j >= 0; j--) {
+		for (int j = strlen(s) - 1; j >= 0; j--) {
 			if (this->string_[i] == s[j]) {
 				flag = 0;
 				break;
@@ -1458,7 +1478,7 @@ size_t CMyString::find_last_not_of(const char* s, size_t pos) const
 
 size_t CMyString::find_last_not_of(const char* s, size_t pos, size_t n) const
 {
-	int flag;
+	size_t flag;
 
 	if (pos < 0 || pos > this->length_ || pos - n < 0)
 		return -1;
@@ -1466,7 +1486,7 @@ size_t CMyString::find_last_not_of(const char* s, size_t pos, size_t n) const
 	for (int i = pos; i >= pos - n; i--) {
 		flag = 1;
 
-		for (int j = strlen(s); j >= 0; j--) {
+		for (int j = strlen(s) - 1; j >= 0; j--) {
 			if (this->string_[i] == s[j]) {
 				flag = 0;
 				break;
@@ -1506,7 +1526,7 @@ CMyString CMyString::substr(size_t pos, size_t len) const
 	_dummy.capacity_ = length_ + 16;
 	_dummy.string_ = new char[capacity_];
 
-	for (int i = pos; i < len + pos; i++) {
+	for (size_t i = pos; i < len + pos; i++) {
 		_dummy[i] = this->string_[i];
 	}
 	_dummy[_dummy.length_] = '\0';
@@ -1522,7 +1542,7 @@ int CMyString::compare(const CMyString& str) const
 		if (this->length_ < str.length_)
 			return -1;
 		else {
-			for (int i = 0; i < this->length_; i++) {
+			for (size_t i = 0; i < this->length_; i++) {
 				if (this->string_[i] != str.string_[i]) 
 					return 1;
 			}
@@ -1573,7 +1593,7 @@ int CMyString::compare(const char* s) const
 		if (this->length_ < strlen(s))
 			return -1;
 		else {
-			for (int i = 0; i < this->length_; i++) {
+			for (size_t i = 0; i < this->length_; i++) {
 				if (this->string_[i] != s[i])
 					return 1;
 			}
@@ -1621,7 +1641,7 @@ CMyString operator+(const CMyString& lhs, char rhs)
 	_dummy.capacity_ = _dummy.length_ + 16;
 	_dummy.string_ = new char[_dummy.capacity_];
 
-	int i = 0;
+	size_t i = 0;
 
 	while (lhs.string_ != '\0') {
 		_dummy.string_[i] = lhs.string_[i];
@@ -1641,7 +1661,7 @@ CMyString operator+(char rhs, const CMyString& lhs)
 	_dummy.capacity_ = _dummy.length_ + 16;
 	_dummy.string_ = new char[_dummy.capacity_];
 
-	int i = 0;
+	size_t i = 0;
 
 	while (lhs.string_ != '\0') {
 		_dummy.string_[i] = lhs.string_[i];
@@ -1658,8 +1678,8 @@ bool operator==(const CMyString& lhs, const CMyString& rhs)
 	if (lhs.length_ != rhs.length_) 
 		return false;
 
-	int capa = lhs.length_;
-	int i = 0;
+	size_t capa = lhs.length_;
+	size_t i = 0;
 
 	while ((i < capa) && (lhs.string_[i] == rhs.string_[i])) 
 		i++;
@@ -1672,8 +1692,8 @@ bool operator==(const char* lhs, const CMyString& rhs)
 	if (strlen(lhs) != rhs.length_)
 		return false;
 
-	int capa = strlen(lhs);
-	int i = 0;
+	size_t capa = strlen(lhs);
+	size_t i = 0;
 
 	while ((i < capa) && (lhs[i] == rhs.string_[i]))
 		i++;
@@ -1686,8 +1706,8 @@ bool operator==(const CMyString& lhs, const char* rhs)
 	if (lhs.length_ != strlen(rhs))
 		return false;
 
-	int capa = lhs.length_;
-	int i = 0;
+	size_t capa = lhs.length_;
+	size_t i = 0;
 
 	while ((i < capa) && (lhs.string_[i] == rhs[i]))
 		i++;
@@ -1700,8 +1720,8 @@ bool operator!=(const CMyString& lhs, const CMyString& rhs)
 	if (lhs.length_ != rhs.length_)
 		return true;
 
-	int capa = lhs.length_;
-	int i = 0;
+	size_t capa = lhs.length_;
+	size_t i = 0;
 
 	while ((i < capa) && (lhs.string_[i] != rhs.string_[i]))
 		i++;
@@ -1714,8 +1734,8 @@ bool operator!=(const char* lhs, const CMyString& rhs)
 	if (strlen(lhs) != rhs.length_)
 		return true;
 
-	int capa = strlen(lhs);
-	int i = 0;
+	size_t capa = strlen(lhs);
+	size_t i = 0;
 
 	while ((i < capa) && (lhs[i] != rhs.string_[i]))
 		i++;
@@ -1728,8 +1748,8 @@ bool operator!=(const CMyString& lhs, const char* rhs)
 	if (lhs.length_ != strlen(rhs))
 		return true;
 
-	int capa = lhs.length_;
-	int i = 0;
+	size_t capa = lhs.length_;
+	size_t i = 0;
 
 	while ((i < capa) && (lhs.string_[i] != rhs[i]))
 		i++;
@@ -1769,15 +1789,15 @@ bool operator<=(const CMyString& lhs, const char* rhs)
 
 bool operator>(const CMyString& lhs, const CMyString& rhs)
 {
-	int sum_dummy = 0;
-	int sum_dummy2 = 0;
+	size_t sum_dummy = 0;
+	size_t sum_dummy2 = 0;
 
-	for (int i = 0; i < lhs.length_; i++) {
-		sum_dummy += (int)lhs[i];
+	for (size_t i = 0; i < lhs.length_; i++) {
+		sum_dummy += (size_t)lhs[i];
 	}
 
-	for (int i = 0; i < rhs.length_; i++) {
-		sum_dummy += (int)rhs[i];
+	for (size_t i = 0; i < rhs.length_; i++) {
+		sum_dummy += (size_t)rhs[i];
 	}
 	return sum_dummy > sum_dummy2;
 }
@@ -1815,7 +1835,7 @@ istream& operator>>(istream& is, CMyString& str)
 	is >> _dummy;
 
 	str = _dummy;
-	int len = strlen(_dummy);
+	size_t len = strlen(_dummy);
 
 	str.string_[len] = '\0';
 
@@ -1832,7 +1852,7 @@ ostream& operator<<(ostream& os, const CMyString& str)
 		return os;
 	}
 	else {
-		int j = 0;
+		size_t j = 0;
 		if (strlen(str.string_) > 0)
 		{
 			while (str.string_[j] != '\0') {
@@ -1849,35 +1869,20 @@ istream& get_line(istream& is, CMyString& str, char delim)
 {
 	// TODO: insert return statement here
 
-	char* _dummy = new char[1001];
+	char x;
 
-	gets_s(_dummy, 1000);
+	size_t len = 0;
+	size_t size = 0;
 
-	CMyString _dummy2;
+	str.clear();
+	while ((x = getchar()) != EOF && x != delim) {
 
-	int len = 0;
-
-	for (int i = 0; i < strlen(_dummy); i++) {
-		if (_dummy[i] == delim) {
-			len = i;
+		if (x == '\n') {
 			break;
 		}
+
+		str.push_back(x);
 	}
-
-	_dummy2.length_ = len;
-	_dummy2.capacity_ = _dummy2.length_ + 16;
-	_dummy2.string_ = new char[_dummy2.capacity_];
-
-	for (int i = 0; i < _dummy2.length_; i++) {
-		_dummy2.string_[i] = _dummy[i];
-	}
-
-	_dummy2.string_[_dummy2.length_] = '\0';
-
-	str = _dummy2;
-
-	delete[] _dummy;
-	_dummy2.~CMyString();
 
 	return is;
 }
@@ -1886,15 +1891,15 @@ istream& get_line(istream& is, CMyString& str)
 {
 	// TODO: insert return statement here
 
-	char* _dummy = new char[1001];
-	is >> _dummy;
+	char x;
 
-	str = _dummy;
-	int len = strlen(_dummy);
+	size_t len = 0;
+	size_t size = 0;
 
-	str.string_[len] = '\0';
-
-	delete[] _dummy;
+	str.clear();
+	while ((x = getchar()) != EOF && x != '\n') {
+		str.push_back(x);
+	}
 
 	return is;
 }

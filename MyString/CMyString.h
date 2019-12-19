@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#define _CRT_SECURE_NO_WARNINGS 1
+
 #include"Iterator.cpp"
 #include"Const_Iterator.cpp"
 #include"Reverse_Iterator.cpp"
